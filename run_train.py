@@ -9,7 +9,7 @@ from chainer import optimizers as optims
 from chainer import serializers as S
 from chainer.optimizer import GradientClipping, WeightDecay
 
-from batch_generator import BatchGeneratorForAiEdgeSegmentation
+from batch_generator import BatchGenerator
 from loss import Loss
 from misc import argv2string
 from model import Model
@@ -173,7 +173,7 @@ def main():
             raise ValueError('Either val_data or val_labels is not specified.')
 
     train_queue = mp.Queue(maxsize=args.queue_maxsize)
-    train_generator = BatchGeneratorForAiEdgeSegmentation(
+    train_generator = BatchGenerator(
         args.batch_size, train_data_path_list, train_labels_path_list,
         train_queue, train=True, noise_injection=args.noise,
         out_height=512, out_width=512,
@@ -186,7 +186,7 @@ def main():
     else:
         val_queue = mp.Queue(maxsize=args.queue_maxsize)
         try:
-            val_generator = BatchGeneratorForAiEdgeSegmentation(
+            val_generator = BatchGenerator(
                 1, val_data_path_list, val_labels_path_list, val_queue,
                 train=False, out_height=608, out_width=968)
             val_generator.start()

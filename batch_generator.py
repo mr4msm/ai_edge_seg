@@ -71,14 +71,14 @@ def convert_label_to_one_hot(t, n_classes=20, dtype='uint8'):
     return one_hot
 
 
-class BatchGeneratorForAiEdgeSegmentation(mp.Process):
+class BatchGenerator(mp.Process):
     def __init__(self, batch_size, data_path_list,
                  labels_path_list, queue,
                  train=True, noise_injection='no',
                  out_height=None, out_width=None,
                  max_height=None, max_width=None,
                  min_height=None, min_width=None):
-        super(BatchGeneratorForAiEdgeSegmentation, self).__init__()
+        super(BatchGenerator, self).__init__()
         self.batch_size = batch_size
         self.data_path_list = np.asarray(data_path_list)
         self.labels_path_list = np.asarray(labels_path_list)

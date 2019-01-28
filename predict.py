@@ -31,9 +31,9 @@ def mean_std_in_limited_range(image_bgr, lower=0, upper=192):
     return image_gray[valid].mean(), image_gray[valid].std()
 
 
-def normalize_with_limited_range_stat(x, lower=0, upper=192):
-    mean, std = mean_std_in_limited_range(x, lower=lower, upper=upper)
-    return (x - mean) / (std + 1e-8)
+def normalize_with_limited_range_stat(image_bgr, lower=0, upper=192):
+    mean, std = mean_std_in_limited_range(image_bgr, lower=lower, upper=upper)
+    return (image_bgr - mean) / (std + 1e-8)
 
 
 class Predictor(object):
@@ -67,8 +67,9 @@ class Predictor(object):
         prob_map = cv2.resize(softmax, (width, height),
                               interpolation=cv2.INTER_NEAREST)
         prob_map = cv2.blur(prob_map, (3, 3), borderType=cv2.BORDER_CONSTANT)
+        label_map = prob_map.argmax(axis=2)
 
-        return prob_map.argmax(axis=2)
+        return label_map
 
 
 def main():
@@ -133,7 +134,7 @@ def main():
         for idx, to_label in enumerate(table_to_convert):
             label_map[label_map_tmp == idx] = to_label
 
-    label_rgb = np.zeros_like(image_bgr)
+    label_rgb = np.empty_like(image_bgr)
     for idx, class_rgb in enumerate(class_rgb_list):
         label_rgb[label_map == idx] = class_rgb
 
